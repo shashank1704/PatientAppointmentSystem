@@ -55,6 +55,12 @@ namespace PatientAppointmentSystem
 
                 Console.WriteLine("=== Patient Appointment System (HCA Healthcare Demo) ===");
 
+                Console.WriteLine("Welcome to HCA Healthcare Patient Appointment System");
+
+                Console.WriteLine("Current date: " + DateTime.Today.ToLongDateString());
+
+                Console.WriteLine();
+
                 Console.WriteLine("1. Add Appointment");
 
                 Console.WriteLine("2. View All Appointments");
@@ -101,7 +107,7 @@ namespace PatientAppointmentSystem
 
                     case "5":
 
-                        Console.Write("Are you sure you want to exit? (y/n): ");
+                        Console.Write("\nAre you sure you want to exit? (y/n): ");
 
                         if (Console.ReadLine().Trim().ToLower() == "y")
 
@@ -111,7 +117,7 @@ namespace PatientAppointmentSystem
 
                     default:
 
-                        Console.WriteLine("Invalid choice. Please select 1-5.");
+                        Console.WriteLine("\nInvalid choice. Please select 1-5.");
 
                         Console.WriteLine("Press any key to continue...");
 
@@ -125,6 +131,10 @@ namespace PatientAppointmentSystem
 
 
             Console.WriteLine("\nThank you for using the Patient Appointment System. Goodbye!");
+
+            Console.WriteLine("Press any key to close...");
+
+            Console.ReadKey();
 
         }
 
@@ -141,6 +151,17 @@ namespace PatientAppointmentSystem
             Console.Write("Patient Name: ");
 
             string patientName = Console.ReadLine().Trim();
+
+
+            while (string.IsNullOrWhiteSpace(patientName))
+
+            {
+
+                Console.Write("Patient name cannot be empty. Try again: ");
+
+                patientName = Console.ReadLine().Trim();
+
+            }
 
 
             Console.Write("Doctor Name: ");
@@ -186,7 +207,6 @@ namespace PatientAppointmentSystem
             Console.WriteLine("\nAppointment successfully added!");
 
             Console.WriteLine("Press any key to return to main menu...");
-
             Console.ReadKey();
 
         }
@@ -198,7 +218,9 @@ namespace PatientAppointmentSystem
 
             Console.Clear();
 
-            Console.WriteLine("--- All Appointments ---");
+            Console.WriteLine("--- All Appointments (Sorted by Date) ---");
+
+
             if (appointments.Count == 0)
 
             {
@@ -211,12 +233,21 @@ namespace PatientAppointmentSystem
 
             {
 
+                var sortedAppointments = appointments
+
+                .OrderBy(a => a.Date)
+
+                .ThenBy(a => a.Time)
+
+                .ToList();
+
+
                 Console.WriteLine($"{"ID",-4} {"Patient",-25} {"Doctor",-20} {"Date",-12} {"Time",-10}");
 
                 Console.WriteLine(new string('-', 71));
 
 
-                foreach (var a in appointments)
+                foreach (var a in sortedAppointments)
 
                 {
 
@@ -257,8 +288,7 @@ namespace PatientAppointmentSystem
 
             }
 
-
-            ViewAppointments(); // Reuse view to show IDs
+            ViewAppointments(); // Show current list with IDs
 
 
             Console.Write("\nEnter the ID of the appointment to delete: ");
@@ -353,11 +383,14 @@ namespace PatientAppointmentSystem
 
             .Where(a => a.PatientName.ToLower().Contains(searchTerm.ToLower()))
 
+            .OrderBy(a => a.Date)
+
+            .ThenBy(a => a.Time)
+
             .ToList();
 
 
-            if (matches.Count == 0)
-
+            if (matches.Count==0)
             {
 
                 Console.WriteLine($"\nNo appointments found containing '{searchTerm}'.");
@@ -368,7 +401,7 @@ namespace PatientAppointmentSystem
 
             {
 
-                Console.WriteLine($"\nFound {matches.Count} matching appointment(s):");
+                Console.WriteLine($"\nFound {matches.Count} matching appointment(s) (sorted by date):");
 
                 Console.WriteLine($"{"ID",-4} {"Patient",-25} {"Doctor",-20} {"Date",-12} {"Time",-10}");
 
